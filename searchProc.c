@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include "MScout.h"
 #include <string.h>
 #include <sys/types.h>
+
+#define MAXIMUM_PROCS 32768
 
 //프로세스들을 탐색, 중요도를 정리하는 기능.
 void searchProc()
@@ -11,6 +11,9 @@ void searchProc()
 	int ret;			//exec 결과값을 저장
 	FILE* fileDes;			//파일 디스크립터
 	int status;			//동기화를 위한 정수 변수
+
+	int* weights;			//중요도 가중치를 저장할 정수 배열
+	Importance* items;		 //중요도를 저장할 자료 배열
 
 	//프로세스 복제.
 	pid = fork();
@@ -43,14 +46,25 @@ void searchProc()
 		//여기선 부모 프로세스이니, pid에는 자식 프로세스 pid이 저장되어있다.
 		//자식이 exit 할때까지 기다리게 된다.
 		waitpid(pid, &status, 0);
+		
+		weights = (int*)malloc(sizeof(int)*PROC_CATEGORY);	//가중치 배열을 할당.
+		items = (Importance*)malloc(sizeof(Importance)*MAXIMUM_PROCS); //중요도 자료구조 배열을 할당.
 
+		//-----------------중요도 값들을 파일에서 읽어들이는 함수() - MScout.h
+		getWeights(weights, SEARCH_PROC);		
+		
 		printf("parent\n");
 		
 		// 자식 프로세스에서(exec 부분) 실행되는 sh 파일에서  임시 데이터 파일을 만들어 여기서 읽는다
 		// 현재는 아직 파일을 만들지 않았다.
 		fileDes = fopen("tempReport.dat", "r");
-		if(!fileDes) perror("fopen");	
+		if(!fileDes) perror("fopen");
 
+		//------------------데이터 파일들의 값을 읽어들이는 함수() - SearchProc.h
+		//------------------데이터 파일을 토대로 중요도를 계산하는 함수() - SearchProc.h
+		
+		free(weights);
+		free(items);
 
 		fclose(fileDes);
 	}
