@@ -33,6 +33,7 @@ void Interface()
 			searchProc();
 			break;
 		case '2':
+			searchFile();
 			break;
 		case '3':
 			break;
