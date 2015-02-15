@@ -16,9 +16,9 @@ void Interface()
 
 		//구현할 메뉴 목록
 		printf("\n\n---------------------------------");
-		printf("\n|1. less important Processes    |");
-		printf("\n|2. Infrequent Users            |");
-		printf("\n|3. Old files in /tmp           |");
+		printf("\n|1. Trace Processes Importance    |");
+		printf("\n|2. Trace File Importance         |");
+		printf("\n|3. Trace Users' Activity         |");
 		printf("\n---------------------------------");
 
 		printf("\n\nPress Q to quit\n\n");
