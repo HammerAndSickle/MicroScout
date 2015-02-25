@@ -22,18 +22,8 @@ void searchFile()
 	//이 함수는 파일의 개수를 반환한다.
 	fileCount = openDirAndReport(path);
 
-	/**************************파일 입/출력 테스트 부분
-	for(i = 0; i < FILE_CATEGORY; i++)
-	{
-		printf("for test\n");
-		printf("%d ", *(weights + i));
-	}
-	printf("test ended\n");
-	*********************************/
-
-
 	//기록한 파일 정보를 받아 중요도 값들을 계산한다.
-	getScores(fileCount);
+	getFileScores(fileCount);
 
 	free(weights);
 	free(path);

@@ -24,10 +24,10 @@ void searchProc()
 	//자식 프로세스가 쉘 스크립트 실행을 맡는다.
 	else if(pid == 0)
 	{
-		printf("child\n");
 
-		//ps.sh는 테스트용 쉘 코드 파일이다.
-		ret = execl("ps.sh", "ps.sh", (char*)0);
+		//pt.sh는 현재 프로세스들의 얻고자 하는 정보들을 /proc 등의 디렉토리의 파일에서 얻어오며,
+		//그 정보들을 임시 파일에 저장할 것이다.
+		ret = execl("pt.sh", "pt.sh", (char*)0);
 
 		if(ret == -1) perror("execv");
 
@@ -54,30 +54,14 @@ void searchProc()
 		//-----------------중요도 값들을 파일에서 읽어들이는 함수() - MScout.h
 		getProcWeights(weights);		
 		
-		printf("parent\n");
-		
-		/******** 파일 입/출력  테스트 함수
-		for(i = 0; i < PROC_CATEGORY; i++)
-		{
-			printf("for test\n");
-			printf("%d ", *(weights + i));
-		}
 
-		printf("test ended\n");
-		************/
-
-		// 자식 프로세스에서(exec 부분) 실행되는 sh 파일에서  임시 데이터 파일을 만들어 여기서 읽는다
-		// 현재는 아직 파일을 만들지 않았다.
-		fileDes = fopen("tempReport.dat", "r");
-		if(!fileDes) perror("fopen");
-
-		//------------------데이터 파일들의 값을 읽어들이는 함수() - SearchProc.h
-		//------------------데이터 파일을 토대로 중요도를 계산하는 함수() - SearchProc.h
+		//위 pt.sh을 이용해 프로세스들의 정보를 임의의 파일에 기록했으니 아래 함수에서 그 내용을 읽어
+		//중요도를 계산한다. 
+		getProcScores();
 		
 		free(weights);
 		free(items);
 
-		fclose(fileDes);
 	}
 
 }

@@ -22,17 +22,17 @@ typedef struct FileStats
 	long int scores[FILE_CATEGORY];	//파일의 중요도 점수들
 } FileStats;
 
-void getStats(FileStats* files, int count);
+void getFileStats(FileStats* files, int count);
 
 
 // 파일의 개수를 받아, 임시 dat 파일에 기록된 파일 정보들을 사용해
 // 중요도 값 수치들을 얻어낸다.
-void getScores(int count)
+void getFileScores(int count)
 {
 	FileStats* files = (FileStats*)malloc(sizeof(FileStats)*count);	//파일의 정보들이 담기는 구조체 배열
 
 	//파일 정보를 files 구조체 배열에 기록
-	getStats(files, count);
+	getFileStats(files, count);
 
 	//funct1();
 	//funct2();
@@ -46,10 +46,10 @@ void getScores(int count)
 }
 
 //filestats.dat에 기록되어 있는 파일의 정보들을 얻어낸다.
-void getStats(FileStats* files, int count)
+void getFileStats(FileStats* files, int count)
 {
-	FILE* tmpF;				//정보를 기록할 임시 파일
-	char* tempFname = "filestats.dat";	//정보를 기록할 임시 파일의 이름
+	FILE* tmpF;				//정보를 불러올 임시 파일
+	char* tempFname = "filestats.dat";	//정보를 불러올 임시 파일의 이름
 	char tempName[MAXIMUM_PATH_LEN];	//잠깐 파일명을 저장할 곳
 	int idx;
 
