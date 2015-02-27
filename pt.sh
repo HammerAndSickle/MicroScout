@@ -12,6 +12,10 @@ CPULIST=($(ps -aux | awk '{print $3}'))
 # idx : PIDLIST의 맨 앞의 "PID"나 CPULIST의 맨 앞의 "%CPU"를 걸러내기 위함.
 idx=0
 
+# procstats.dat 파일이 있다면 파일을 지우도록 하여 새로 생성되도록 한다.
+if [ -f procstats.dat ]; then
+	rm procstats.dat
+fi
 
 # 테스트삼아 정보들을 터미널에  출력한다. -> 테스트 완료.
 # (필요한 정보들을 임의의 파일에 저장하여 프로그램에서 읽어들이도록 할 것이다.)
