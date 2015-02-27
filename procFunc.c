@@ -100,6 +100,9 @@ int getProcStats(ProcStats* procs)
 
 	fclose(tmpF);
 
+	//정보를 모두 옮겼으니 기록 파일을 삭제한다.
+	if(remove(tempFname) == -1) perror("remove");
+
 	return idx;
 }
 

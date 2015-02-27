@@ -16,6 +16,9 @@ void searchProc()
 	int* weights;			//중요도 가중치를 저장할 정수 배열
 	ProcImportance* items;		 //중요도를 저장할 자료 배열
 
+
+	chmod("pt.sh", 0775);		//쉘스크립트 권한을 설정
+
 	//프로세스 복제.
 	pid = fork();
 

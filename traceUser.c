@@ -10,6 +10,8 @@ void traceUser()
 	FILE* fileDes;			//파일 디스크립터
 	int status;			//동기화를 위한 정수 변수
 
+	chmod("ut.sh", 0775);		//쉘 스크립트 권한 변경
+
 	//프로세스 복제.
 	pid = fork();
 

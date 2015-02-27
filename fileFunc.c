@@ -124,6 +124,9 @@ void getFileStats(FileStats* files, int count)
 
 	fclose(tmpF);
 
+	//정보를 모두 옮겼으니 기록 파일을 삭제한다.
+	if(remove(tempFname) == -1) perror("remove");
+
 }
 
 //권한 값을 중요도로 환산한다.
