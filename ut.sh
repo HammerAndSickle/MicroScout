@@ -17,23 +17,79 @@ do
 	echo -n $ITEM >> userstats.dat		#이름을 출력
 	echo -n " " >> userstats.dat
 
+	#1---PERLS 빈도
 	PERLS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep 'perl' | wc -w
 
+	#2---SUDO, SU 빈도
 	SUDOES=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'sudo' | wc -w
 	SUS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'su' | wc -w
+	SUSUM=$(($SUDOES + $SUS))
 	
+	#3---디버거 빈도
+	GDBS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'gdb' | wc -w
 
-	GDBS=/home/"$ITEM"/.bash_history | awk | wc -w
+	#4---에디터 빈도
+	GEDITS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'gedit' | wc -w
+	VIS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'vi' | wc -w
+	EDITSUM=$(($GEDITS + $VIS))
 	
-
-
-	EDITS=/home/"$ITEM"/.bash_history | grep 'perl' | wc -w
-	COMPILES=/home/"$ITEM"/.bash_history | grep 'perl' | wc -w
-	BROWSERS=/home/"$ITEM"/.bash_history | grep 'perl' | wc -w
-	NETWORKS=/home/"$ITEM"/.bash_history | grep 'perl' | wc -w
-	ENVIRONS=/home/"$ITEM"/.bash_history | grep 'perl' | wc -w
-	KILLERS=/home/"$ITEM"/.bash_history | grep 'perl' | wc -w
+	#5---컴파일러 빈도
+	GCCS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'gcc' | wc -w
+	GPPS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'g++' | wc -w
+	JAVACS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'javac' | wc -w
+	COMPSUM=$(($GCCS + $GPPS + $JAVACS))
 	
-	echo -n /home/"$ITEM"/.bash_history | grep 'perl' | wc -w >> userstats.dat
+	#6---브라우저 빈도
+	FF=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'firefox' | wc -w
+	CR=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'chrome' | wc -w
+	BROWSUM=$(($FF + $CR))
+	
+	#7---네트워크 빈도
+	IFCFS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'ifconfig' | wc -w
+	ROUTS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'route' | wc -w
+	NETSTATS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'netstat' | wc -w
+	NETWORKSUM=$(($IFCFS + $ROUTS + $NETSTATS))
+	
+	#8---환경변수 빈도
+	EXPORS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'export' | wc -w
+	ENVIRONS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep 'env' | wc -w
+	ENVS=$(($EXPORS + $ENVIRONS))
+	
+	#9---Kill 빈도
+	KILLERS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep -w 'kill' | wc -w
+	
+	#10---who 빈도
+	FORGOTS=/home/"$ITEM"/.bash_history | awk '{print $1}' | grep 'who' | wc -w
+	
+	
+	echo -n $PERLS >> userstats.dat
 	echo -n " " >> userstats.dat
+	
+	echo -n $SUSUM >> userstats.dat
+	echo -n " " >> userstats.dat
+	
+	echo -n $GDBS >> userstats.dat
+	echo -n " " >> userstats.dat
+	
+	echo -n $EDITSUM >> userstats.dat
+	echo -n " " >> userstats.dat
+	
+	echo -n $COMPSUM >> userstats.dat
+	echo -n " " >> userstats.dat
+	
+	echo -n $BROWSUM >> userstats.dat
+	echo -n " " >> userstats.dat
+	
+	echo -n $NETWORKSUM >> userstats.dat
+	echo -n " " >> userstats.dat
+	
+	echo -n $ENVS >> userstats.dat
+	echo -n " " >> userstats.dat
+	
+	echo -n $KILLERS >> userstats.dat
+	echo -n " " >> userstats.dat
+	
+	echo -n $FORGOTS >> userstats.dat
+	echo -n " " >> userstats.dat
+
 done
