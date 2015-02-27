@@ -119,15 +119,17 @@ int openDirAndReport(char* path)
 		strcpy(tempPath, path);
 		strcat(tempPath, "/");
 		strcat(tempPath, dentry->d_name);
-		printf("%s\n", tempPath);
+		//printf("%s\n", tempPath);
 
 		if(stat(tempPath, &fileInfo) == -1) perror("stst");
 	
 		/******************테스트 : 필요한 정보들을 출력해본다.*****************
 		printf("파일명 :%s\n", tempPath); 			//파일명
+		printf("st_dev : %d\n", fileInfo.st_dev);		//디바이스 노드
 		printf("st_mode : %o\n", fileInfo.st_mode);		//권한
 		printf("st_nlink : %d\n", fileInfo.st_nlink);		//하드링크 개수
 		printf("st_uid : %d\n", fileInfo.st_uid); 		//소유자
+		printf("st_gid : %d\n", fileInfo.st_gid);		//소유자 그룹
 		printf("st_size : %d\n", fileInfo.st_size);		//바이트 크기
 		printf("st_blksize : %d\n", fileInfo.st_blksize);	//블록 크기
 		printf("st_blocks : %d\n", fileInfo.st_blocks);		//할당 블록 개수
@@ -135,7 +137,7 @@ int openDirAndReport(char* path)
 		*********************************************************************/
 
 		//필요한 정보들을 임시 파일에 저장한다.
-		fprintf(tmpF, "%s %o %d %d %d %d %d %u\n", tempPath, fileInfo.st_mode, fileInfo.st_nlink, fileInfo.st_uid, fileInfo.st_size, fileInfo.st_blksize, fileInfo.st_blocks, fileInfo.st_atim);
+		fprintf(tmpF, "%s %d %o %d %d %d %d %d %d %u\n", tempPath, fileInfo.st_dev, fileInfo.st_mode, fileInfo.st_nlink, fileInfo.st_uid, fileInfo.st_gid, fileInfo.st_size, fileInfo.st_blksize, fileInfo.st_blocks, fileInfo.st_atim);
 		
 		
 		}
