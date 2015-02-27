@@ -36,6 +36,7 @@ void Interface()
 			searchFile();
 			break;
 		case '3':
+			traceUsers();
 			break;
 		}
 
