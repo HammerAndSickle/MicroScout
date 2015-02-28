@@ -112,3 +112,7 @@ void getFileWeights(int* arr)
 	fclose(f);
 }
 
+//가중치를 반영한, 최종적인 점수, ranking 계산
+void getRanking(FileStats* files, int* weight)
+{
+	float
