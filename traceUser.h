@@ -14,24 +14,8 @@ typedef struct UserStats
 } UserStats;
 
 
-void printTrails();
 int getUserStats(UserStats* users);
 
-
-void printTrails()
-{
-	int count;		//num of users
-	UserStats* users = (UserStats*)malloc(sizeof(UserStats)*MAX_USERS);	//유저 정보 구조체 배열
-	int idx;
-	
-	count = getUserStats(users);	//유저들의 행적값들을 파일에서 불러들인다.
-	free(users);
-
-	for(idx = 0; idx < count; idx++)
-	{
-		printf("%s : %d %d %d %d %d %d %d %d %d %d\n", (users + idx)->name, (users + idx)->trails[0], (users + idx)->trails[1], (users + idx)->trails[2], (users + idx)->trails[3], (users + idx)->trails[4], (users + idx)->trails[5], (users + idx)->trails[6], (users + idx)->trails[7], (users + idx)->trails[8], (users + idx)->trails[9]);
-	}
-}
 
 
 //유저들의 정보를 파일에서 읽어들이고, 총 유저 수를 반환한다.
