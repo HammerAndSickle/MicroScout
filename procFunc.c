@@ -13,7 +13,8 @@
 #define MAX_CATEGORY 100		//프로세스 중요도나 파일 중요도의 심사 부문은 합해도 최대 100개까지만 가능.
 #define MAXIMUM_PROCS 32768		//프로세스는 최대 32768개이다.
 
-
+#define PROC_OFFSET 0			//가중치 값 중 프로세스 값의 시작점 인덱스
+#define FILE_OFFSET PROC_CATEGORY	//가중치 값 중 파일 값의 시작점 인덱스
 
 #define USE_SOFT_LIMIT 0
 #define USE_HARD_LIMIT 1	//리소스 제한값 함수의 옵션으로 사용할 상수.

@@ -21,7 +21,6 @@ void searchFile()
 	//기록한 파일 정보를 받아 중요도 값들을 계산한다.
 	getFileScores(fileCount);
 
-	free(weights);
 	free(path);
 
 }

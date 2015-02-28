@@ -13,6 +13,9 @@
 #define MAX_CATEGORY 100		//프로세스 중요도나 파일 중요도의 심사 부문은 합해도 최대 100개까지만 가능.
 #define MAXIMUM_PATH_LEN 1024	//파일 절대경로명은 최대 1024바이트 문자열.
 
+#define PROC_OFFSET 0			//프로세스 가중치 값 시작점 인덱스
+#define FILE_OFFSET PROC_CATEGORY	//파일 가중치 값 시작점 인덱스
+
 #define SECTOR1 0		//부문별로 점수 인덱스를 상수로 정의한 것.
 #define SECTOR2 1
 #define SECTOR3 2

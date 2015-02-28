@@ -1,6 +1,8 @@
-#include "searchProc.h"
 #include <string.h>
 #include <sys/types.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define MAXIMUM_PROCS 32768
 
@@ -56,8 +58,6 @@ void searchProc()
 		//중요도를 계산한다. 
 		getProcScores();
 		
-		free(weights);
-		free(items);
 
 	}
 
