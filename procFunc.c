@@ -89,8 +89,8 @@ void getProcWeights(int* arr)
 	if((f = fopen(fname, "r")) == NULL)	//파일이 없는 경우 디폴트 값 생성.
 	{
 		f = fopen(fname, "w");
-		fprintf(f, "%d %d %d %d %d ", 18, 19, 20, 21, 22);
-		fprintf(f, "%d %d %d %d %d ", 16, 18, 20, 22, 24);
+		fprintf(f, "%d %d %d %d %d ", 10, 12, 10, 8, 12);	//process weight
+		fprintf(f, "%d %d %d %d %d ", 10, 10, 10, 10, 10);	//file weiht
 		fclose(f);
 	}
 	
