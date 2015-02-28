@@ -42,6 +42,7 @@ typedef struct ProcStats
 
 	//각 부문별로 중요도 점수 저장
 	float scores[PROC_CATEGORY];
+	float scoreSum;		//sum of score
 	
 } ProcStats;
 

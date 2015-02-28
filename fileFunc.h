@@ -63,6 +63,7 @@ typedef struct FileStats
 	long int atime;			//파일의 최종 사용 시간
 	
 	float scores[FILE_CATEGORY];	//파일의 중요도 점수들
+	float scoreSum;
 } FileStats;
 
 
