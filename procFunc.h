@@ -7,47 +7,49 @@
 #include <sys/resource.h>
 
 #define PROC_CATEGORY 5
-#define FILE_CATEGORY 5			//ÆÄÀÏ Áß¿äµµ °Ë»ç´Â 5°³ÀÇ ½É»ç ºÎ¹®À» °ÅÃÄ °è»êÇÑ´Ù.
-#define MAX_CATEGORY 100		//ÇÁ·Î¼¼½º Áß¿äµµ³ª ÆÄÀÏ Áß¿äµµÀÇ ½É»ç ºÎ¹®Àº ÇÕÇØµµ ÃÖ´ë 100°³±îÁö¸¸ °¡´É.
-#define MAXIMUM_PROCS 32768		//ÇÁ·Î¼¼½º´Â ÃÖ´ë 32768°³ÀÌ´Ù.
+#define FILE_CATEGORY 5			//íŒŒì¼ ì¤‘ìš”ë„ ê²€ì‚¬ëŠ” 5ê°œì˜ ì‹¬ì‚¬ ë¶€ë¬¸ì„ ê±°ì³ ê³„ì‚°í•œë‹¤.
+#define MAX_CATEGORY 100		//í”„ë¡œì„¸ìŠ¤ ì¤‘ìš”ë„ë‚˜ íŒŒì¼ ì¤‘ìš”ë„ì˜ ì‹¬ì‚¬ ë¶€ë¬¸ì€ í•©í•´ë„ ìµœëŒ€ 100ê°œê¹Œì§€ë§Œ ê°€ëŠ¥.
+#define MAXIMUM_PROCS 32768		//í”„ë¡œì„¸ìŠ¤ëŠ” ìµœëŒ€ 32768ê°œì´ë‹¤.
 
-#define PROC_OFFSET 0			//°¡ÁßÄ¡ °ª Áß ÇÁ·Î¼¼½º °ªÀÇ ½ÃÀÛÁ¡ ÀÎµ¦½º
-#define FILE_OFFSET PROC_CATEGORY	//°¡ÁßÄ¡ °ª Áß ÆÄÀÏ °ªÀÇ ½ÃÀÛÁ¡ ÀÎµ¦½º
+#define PROC_OFFSET 0			//ê°€ì¤‘ì¹˜ ê°’ ì¤‘ í”„ë¡œì„¸ìŠ¤ ê°’ì˜ ì‹œì‘ì  ì¸ë±ìŠ¤
+#define FILE_OFFSET PROC_CATEGORY	//ê°€ì¤‘ì¹˜ ê°’ ì¤‘ íŒŒì¼ ê°’ì˜ ì‹œì‘ì  ì¸ë±ìŠ¤
 
 #define USE_SOFT_LIMIT 0
-#define USE_HARD_LIMIT 1	//¸®¼Ò½º Á¦ÇÑ°ª ÇÔ¼öÀÇ ¿É¼ÇÀ¸·Î »ç¿ëÇÒ »ó¼ö.
+#define USE_HARD_LIMIT 1	//ë¦¬ì†ŒìŠ¤ ì œí•œê°’ í•¨ìˆ˜ì˜ ì˜µì…˜ìœ¼ë¡œ ì‚¬ìš©í•  ìƒìˆ˜.
 
-#define SECTOR1 0		//ºÎ¹®º°·Î Á¡¼ö ÀÎµ¦½º¸¦ »ó¼ö·Î Á¤ÀÇÇÑ °Í.
+#define SECTOR1 0		//ë¶€ë¬¸ë³„ë¡œ ì ìˆ˜ ì¸ë±ìŠ¤ë¥¼ ìƒìˆ˜ë¡œ ì •ì˜í•œ ê²ƒ.
 #define SECTOR2 1
 #define SECTOR3 2
 #define SECTOR4 3
 #define SECTOR5 4
 
-#define NO_VALUE -1		//ÇÁ·Î¼¼½ºÀÇ ¸î¸î Á¤º¸¸¦ ¾òÁö ¸øÇÏ¸é -1À» ÀúÀåÇÏ°Ô µÈ´Ù.
+#define NO_VALUE -1		//í”„ë¡œì„¸ìŠ¤ì˜ ëª‡ëª‡ ì •ë³´ë¥¼ ì–»ì§€ ëª»í•˜ë©´ -1ì„ ì €ì¥í•˜ê²Œ ëœë‹¤.
 
-//ProcÀÇ Á¤º¸µéÀ» ÀúÀåÇÏ´Â µ¥ÀÌÅÍ±¸Á¶´Ù.
-//°ªÀ» Ã£À» ¼ö ¾øÀ» °æ¿ì -1ÀÌ ÀúÀåµÇµµ·Ï ÇÏ¿´´Ù.
-//Å×½ºÆ® °á°ú, CPUusage, VSZ, RSS¿¡¸¸ -1ÀÌ ÀúÀåµÇ´Â °ÍÀ» È®ÀÎ, °ªÀ» Ã£Áö ¸øÇÏ´Â °æ¿ì¸¦ CPUusage, VSZ, RSS¿¡¸¸ °¡Á¤ÇÑ´Ù.
+#define TOP_RANKINGS 25
+
+//Procì˜ ì •ë³´ë“¤ì„ ì €ì¥í•˜ëŠ” ë°ì´í„°êµ¬ì¡°ë‹¤.
+//ê°’ì„ ì°¾ì„ ìˆ˜ ì—†ì„ ê²½ìš° -1ì´ ì €ì¥ë˜ë„ë¡ í•˜ì˜€ë‹¤.
+//í…ŒìŠ¤íŠ¸ ê²°ê³¼, CPUusage, VSZ, RSSì—ë§Œ -1ì´ ì €ì¥ë˜ëŠ” ê²ƒì„ í™•ì¸, ê°’ì„ ì°¾ì§€ ëª»í•˜ëŠ” ê²½ìš°ë¥¼ CPUusage, VSZ, RSSì—ë§Œ ê°€ì •í•œë‹¤.
 typedef struct ProcStats
 {
 	pid_t pid;		//PID
-	pid_t ppid;		//ºÎ¸ğ PID
-	pid_t pgid;		//±×·ì ID
-	pid_t sid;		//¼¼¼Ç ID
-	float CPUusage;		//CPU »ç¿ë·ü
-	int VSZ;		//°¡»ó ¸Ş¸ğ¸® »ç¿ë
-	int RSS;		//»ç¿ë ½ÇÁ¦ ¸Ş¸ğ¸®
-	int FDSize;		//½½·Ô °³¼ö
-	int niceVal;		//¿ì¼±¼øÀ§ °ª
+	pid_t ppid;		//ë¶€ëª¨ PID
+	pid_t pgid;		//ê·¸ë£¹ ID
+	pid_t sid;		//ì„¸ì…˜ ID
+	float CPUusage;		//CPU ì‚¬ìš©ë¥ 
+	int VSZ;		//ê°€ìƒ ë©”ëª¨ë¦¬ ì‚¬ìš©
+	int RSS;		//ì‚¬ìš© ì‹¤ì œ ë©”ëª¨ë¦¬
+	int FDSize;		//ìŠ¬ë¡¯ ê°œìˆ˜
+	int niceVal;		//ìš°ì„ ìˆœìœ„ ê°’
 
-	//°¢ ºÎ¹®º°·Î Áß¿äµµ Á¡¼ö ÀúÀå
+	//ê° ë¶€ë¬¸ë³„ë¡œ ì¤‘ìš”ë„ ì ìˆ˜ ì €ì¥
 	float scores[PROC_CATEGORY];
 	float scoreSum;		//sum of score
 	
 } ProcStats;
 
 
-//sector´Â Á¡¼ö¸¦ ÀúÀåÇÏ´Â ¹è¿­ÀÇ ÀÎµ¦½º·Î ¾²ÀÎ´Ù.
+//sectorëŠ” ì ìˆ˜ë¥¼ ì €ì¥í•˜ëŠ” ë°°ì—´ì˜ ì¸ë±ìŠ¤ë¡œ ì“°ì¸ë‹¤.
 void eval1_nice(ProcStats* procs, int num, int sector);
 void eval2_FD(ProcStats* procs, int num, int option, int sector);
 void eval3_CPU_USAGE(ProcStats* procs, int num, int sector);
@@ -55,7 +57,7 @@ void eval4_pids_comp(ProcStats* procs, int num, int sector);
 void eval5_memory(ProcStats* procs, int num, int sector);
 
 
-//nice °ªÀ» Áß¿äµµ·Î È¯»êÇÑ´Ù.
+//nice ê°’ì„ ì¤‘ìš”ë„ë¡œ í™˜ì‚°í•œë‹¤.
 void eval1_nice(ProcStats* procs, int num, int sector)
 {
 	int idx;
@@ -63,21 +65,21 @@ void eval1_nice(ProcStats* procs, int num, int sector)
 
 	for(idx = 0; idx < num; idx++)
 	{
-		val = -(((procs + idx)->niceVal) -19);	//-19 ÈÄ *(-1)
-		(procs + idx)->scores[sector] = ((float)(val)/40)*100;	//val °ªÀ» floatÈ­ÇÏ¿© (100/40)À» °öÇÑ´Ù.
+		val = -(((procs + idx)->niceVal) -19);	//-19 í›„ *(-1)
+		(procs + idx)->scores[sector] = ((float)(val)/40)*100;	//val ê°’ì„ floatí™”í•˜ì—¬ (100/40)ì„ ê³±í•œë‹¤.
 	}
 
-	//ex) nice°¡ 0ÀÏ °æ¿ì, ¿ì¼±µµ °ªÀÌ 19ÀÌ¹Ç·Î, 19 * (100/40)Àº 47.5 °¡ µÈ´Ù.
+	//ex) niceê°€ 0ì¼ ê²½ìš°, ìš°ì„ ë„ ê°’ì´ 19ì´ë¯€ë¡œ, 19 * (100/40)ì€ 47.5 ê°€ ëœë‹¤.
 }
 
-//FDSize °ªÀ» Áß¿äµµ·Î È¯»êÇÑ´Ù.
+//FDSize ê°’ì„ ì¤‘ìš”ë„ë¡œ í™˜ì‚°í•œë‹¤.
 void eval2_FD(ProcStats* procs, int num, int option, int sector)
 {
-	struct rlimit rlim;			//¸®¼Ò½º Á¦ÇÑ°ªÀ» ¾ò±â À§ÇÑ ±¸Á¶Ã¼
+	struct rlimit rlim;			//ë¦¬ì†ŒìŠ¤ ì œí•œê°’ì„ ì–»ê¸° ìœ„í•œ êµ¬ì¡°ì²´
 	unsigned long max;			//maximum limit value
 	int idx;
 
-	getrlimit(RLIMIT_NOFILE, &rlim);	//Ä¿³Î¿¡¼­ ¸®¼Ò½º Á¦ÇÑ°ªÀ» ¾ò¾î¿Â´Ù.
+	getrlimit(RLIMIT_NOFILE, &rlim);	//ì»¤ë„ì—ì„œ ë¦¬ì†ŒìŠ¤ ì œí•œê°’ì„ ì–»ì–´ì˜¨ë‹¤.
 
 	switch(option)
 	{
@@ -92,25 +94,25 @@ void eval2_FD(ProcStats* procs, int num, int option, int sector)
 			break;
 	}
 			
-	//Å×½ºÆ®¿ë ¸®¹ÌÆ®°ª Ãâ·Â
+	//í…ŒìŠ¤íŠ¸ìš© ë¦¬ë¯¸íŠ¸ê°’ ì¶œë ¥
 	//printf("FILE MAX: %lu, MAX : %lu\n", rlim.rlim_cur, rlim.rlim_max);
 	
 	for(idx = 0; idx < num; idx++)
 	{
-		(procs + idx)->scores[sector] = (((float)((procs + idx)->FDSize))/max)*100;	//floatÀ¸·Î ³ªÅ¸³»µµ·Ï ÇÑ´Ù.
+		(procs + idx)->scores[sector] = (((float)((procs + idx)->FDSize))/max)*100;	//floatìœ¼ë¡œ ë‚˜íƒ€ë‚´ë„ë¡ í•œë‹¤.
 	}
 	
 
 }
 
-//CPU »ç¿ë·üÀ» Á¡¼ö·Î È¯»êÇÑ´Ù.
+//CPU ì‚¬ìš©ë¥ ì„ ì ìˆ˜ë¡œ í™˜ì‚°í•œë‹¤.
 void eval3_CPU_USAGE(ProcStats* procs, int num, int sector)
 {
 	int idx;
 	
 	for(idx = 0; idx < num; idx++)
 	{
-		//°ªÀ» Ã£Áö ¸øÇØ -1ÀÌ ÀúÀåµÇ¾îÀÖÀ» °æ¿ì,
+		//ê°’ì„ ì°¾ì§€ ëª»í•´ -1ì´ ì €ì¥ë˜ì–´ìˆì„ ê²½ìš°,
 		if( (procs + idx)->CPUusage == NO_VALUE )
 			(procs + idx)->scores[sector] = 0.0;
 		else
@@ -120,7 +122,7 @@ void eval3_CPU_USAGE(ProcStats* procs, int num, int sector)
 
 }
 
-//PIDµéÀ» ºñ±³ÇÏ¿© Áß¿äµµ¸¦ Á¶»çÇØ º»´Ù.
+//PIDë“¤ì„ ë¹„êµí•˜ì—¬ ì¤‘ìš”ë„ë¥¼ ì¡°ì‚¬í•´ ë³¸ë‹¤.
 void eval4_pids_comp(ProcStats* procs, int num, int sector)
 {
 	int idx;
@@ -128,17 +130,17 @@ void eval4_pids_comp(ProcStats* procs, int num, int sector)
 
 	for(idx = 0; idx < num; idx++)
 	{
-		score = 20.0;	//±âº» Á¡¼ö´Â 20Á¡ÀÌ´Ù.
+		score = 20.0;	//ê¸°ë³¸ ì ìˆ˜ëŠ” 20ì ì´ë‹¤.
 	
-		//ÇÁ·Î±×·¥ ±×·ìÀÇ ¸®´õÀÎ°¡?
+		//í”„ë¡œê·¸ë¨ ê·¸ë£¹ì˜ ë¦¬ë”ì¸ê°€?
 		if( (procs + idx)->pid == (procs + idx)->pgid )
 			score += 30.0;
 
-		//¼¼¼ÇÀÇ ¸®´õÀÎ°¡?
+		//ì„¸ì…˜ì˜ ë¦¬ë”ì¸ê°€?
 		if( (procs + idx)->pgid == (procs + idx)->sid )
 			score += 40.0;
 
-		//ºÎ¸ğ°¡ initÀÌ°Å³ª, ÀÌ ÇÁ·Î¼¼½º ÀÚÃ¼°¡ initÀÎ°¡?
+		//ë¶€ëª¨ê°€ initì´ê±°ë‚˜, ì´ í”„ë¡œì„¸ìŠ¤ ìì²´ê°€ initì¸ê°€?
 		if( (procs + idx)->ppid == 0 || (procs + idx)->ppid == 1 )
 			score += 10.0;
 
@@ -146,21 +148,21 @@ void eval4_pids_comp(ProcStats* procs, int num, int sector)
 	}
 }
 
-//memory VSZ, RSS°ªµéÀ» ÀÌ¿ëÇØ Áß¿äµµ¸¦ Á¶»çÇØ º»´Ù.
+//memory VSZ, RSSê°’ë“¤ì„ ì´ìš©í•´ ì¤‘ìš”ë„ë¥¼ ì¡°ì‚¬í•´ ë³¸ë‹¤.
 void eval5_memory(ProcStats* procs, int num, int sector)
 {
 	int idx;
 
-	//RSS(½ÇÁ¦ »ç¿ë ¸Ş¸ğ¸®)´Â VSZ(°¡»ó ¸Ş¸ğ¸®) °ª±îÁö »ó½Â °¡´ÉÇÏ´Ù.
-	//È¿À²ÀûÀ¸·Î »ç¿ëÇÏ´Â Á¤µµ¸¦ Á¶»ç.
+	//RSS(ì‹¤ì œ ì‚¬ìš© ë©”ëª¨ë¦¬)ëŠ” VSZ(ê°€ìƒ ë©”ëª¨ë¦¬) ê°’ê¹Œì§€ ìƒìŠ¹ ê°€ëŠ¥í•˜ë‹¤.
+	//íš¨ìœ¨ì ìœ¼ë¡œ ì‚¬ìš©í•˜ëŠ” ì •ë„ë¥¼ ì¡°ì‚¬.
 
 	for(idx = 0; idx < num; idx++)
 	{
-		//VSZ³ª RSS°¡-1ÀÏ °æ¿ì´Â 20Á¡À» ºÎ¿©ÇÑ´Ù.
+		//VSZë‚˜ RSSê°€-1ì¼ ê²½ìš°ëŠ” 20ì ì„ ë¶€ì—¬í•œë‹¤.
 		if( (procs + idx)->VSZ == -1 || (procs + idx)->RSS == -1 )
 			(procs + idx)->scores[sector] = 20.0;
 
-		//±× ¿ÜÀÇ °æ¿ì, RSS/VSZ°ªÀ» È¿À² Á¡¼ö·Î ÁöÁ¤.
+		//ê·¸ ì™¸ì˜ ê²½ìš°, RSS/VSZê°’ì„ íš¨ìœ¨ ì ìˆ˜ë¡œ ì§€ì •.
 		else (procs + idx)->scores[sector] = ((float)((procs + idx)->RSS) / (float)((procs + idx)->VSZ)) * 100;
 	}
 }
