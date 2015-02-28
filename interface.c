@@ -36,6 +36,7 @@ void Interface()
 		switch(cmd)
 		{
 		case PROCESS_SELECT:
+			printf("\nsearching process. please wait.....\n");
 			searchProc();
 			cmd = 'q';
 			break;

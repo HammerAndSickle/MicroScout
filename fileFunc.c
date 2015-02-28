@@ -139,7 +139,7 @@ void getFileRanking(FileStats* files, int* weights, int count)
 		//만일 랭킹 최대 개수보다 현재 파일들이 적을 경우
 		if(idx == count) break;
 
-		printf("%d.  %s\n", (idx+1), (files + idx)->name);
+		printf("%d\t\t%s\t\t%f\n", (idx+1), (files + idx)->name, (files + idx)->scoreSum);
 	}
 
 }
