@@ -9,7 +9,11 @@
 #include <sys/resource.h>
 
 #define PROC_CATEGORY 5
-#define MAXIMUM_PROCS 32768	//프로세스는 최대 32768개이다.
+#define FILE_CATEGORY 5			//파일 중요도 검사는 5개의 심사 부문을 거쳐 계산한다.
+#define MAX_CATEGORY 100		//프로세스 중요도나 파일 중요도의 심사 부문은 합해도 최대 100개까지만 가능.
+#define MAXIMUM_PROCS 32768		//프로세스는 최대 32768개이다.
+
+
 
 #define USE_SOFT_LIMIT 0
 #define USE_HARD_LIMIT 1	//리소스 제한값 함수의 옵션으로 사용할 상수.
@@ -46,6 +50,7 @@ typedef struct ProcStats
 
 void getProcScores();
 int getProcStats(ProcStats* procs);
+void getProcWeights(int* arr);
 void eval1_nice(ProcStats* procs, int num, int sector);
 void eval2_FD(ProcStats* procs, int num, int option, int sector);
 void eval3_CPU_USAGE(ProcStats* procs, int num, int sector);
@@ -58,6 +63,8 @@ void getProcScores()
 {
 	int count; 					//얻어낸 프로세스의 총 개수를 저장한다.
 	int idx;
+
+	int* weights;			//중요도 가중치를 저장할 정수 배열
 
 	ProcStats* procs = (ProcStats*)malloc(sizeof(ProcStats)*MAXIMUM_PROCS); //프로세스의 정보들이 담기는 구조체 배열
 
@@ -77,6 +84,14 @@ void getProcScores()
 	{
 		printf("%d : %f %f %f %f %f\n", (procs + idx)->pid, (procs + idx)->scores[0], (procs + idx)->scores[1], (procs + idx)->scores[2], (procs + idx)->scores[3], (procs + idx)->scores[4]);
 	}
+	
+	//중요도 배열
+	weights = (int*)malloc(sizeof(int)*PROC_CATEGORY);
+
+	
+	//-----------------중요도 값들을 파일에서 읽어들이는 함수()
+	getProcWeights(weights);
+
 
 	free(procs);
 
@@ -105,6 +120,48 @@ int getProcStats(ProcStats* procs)
 
 	return idx;
 }
+
+//일단 모든 가중치는 파일 weight.db에 저장되고, 여기의 값을 모두 temp에 옮긴 뒤, 프로세스 중요도 탐색 작업에 필요한 가중치들만을 골라서 arr에 가져오도록 한다.
+//
+//arr :		작업에 필요한 가중치 배열이다. 이는 그 작업에서 선언, 할당되어서 사용된다.
+//		예를 들어 '프로세스 중요도 탐색' 작업을 수행한다면 그에 필요한 가중치들을 가져간다.
+//		작업마다 필요한 가중치 개수는 위에서 상수로 지정되어있다.
+void getProcWeights(int* arr)
+{
+	char* fname = "weight.db";		//가중치 값을 저장하는 파일
+	FILE *f;
+	int i;
+	int temp[MAX_CATEGORY]; 		//임시 정수 배열로, 최대 100개까지의 값을 저장
+	int offset;				//offset은 매개변수 opt의 값에 따라 달라진다.
+		
+
+	if((f = fopen(fname, "r")) == NULL)	//파일이 없는 경우 디폴트 값 생성.
+	{
+		f = fopen(fname, "w");
+		fprintf(f, "%d %d %d %d %d ", 18, 19, 20, 21, 22);
+		fprintf(f, "%d %d %d %d %d ", 16, 18, 20, 22, 24);
+		fclose(f);
+	}
+	
+	
+	//프로세스 중요도 심사항목이 5개, 파일 중요도 심사항목이 5개라고 가정하면
+	//데이터 파일에 저장된 가중치는 10개뿐이다.
+	for(i = 0; i < PROC_CATEGORY + FILE_CATEGORY; i++)
+	{
+		fscanf(f, "%d", &temp[i]);
+	}
+
+	//이제 매개변수로 들어온 배열 arr에 가중치 값들을 집어넣는다.
+	//프로세스의 가중치에 해당되는 값들을 불러온다.
+	for(i = 0; i < PROC_CATEGORY; i++)
+	{
+		*(arr + i) = temp[PROC_OFFSET + i];
+	}
+		
+
+	fclose(f);
+}
+
 
 //nice 값을 중요도로 환산한다.
 void eval1_nice(ProcStats* procs, int num, int sector)

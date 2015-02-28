@@ -19,45 +19,7 @@
 #define MAXIMUM_PATH_LEN 1024		//경로 문자열의 최대 길이(바이트)
 
 
-//일단 모든 가중치는 파일 weight.db에 저장되고, 여기의 값을 모두 temp에 옮긴 뒤, 프로세스 중요도 탐색 작업에 필요한 가중치들만을 골라서 arr에 가져오도록 한다.
-//
-//arr :		작업에 필요한 가중치 배열이다. 이는 그 작업에서 선언, 할당되어서 사용된다.
-//		예를 들어 '파일 중요도 탐색' 작업을 수행한다면 그에 필요한 가중치들을 가져간다.
-//		작업마다 필요한 가중치 개수는 위에서 상수로 지정되어있다.
-void getFileWeights(int* arr)
-{
-	char* fname = "weight.db";		//가중치 값을 저장하는 파일
-	FILE *f;
-	int i;
-	int temp[MAX_CATEGORY]; 		//임시 정수 배열로, 최대 100개까지의 값을 저장
-		
 
-	if((f = fopen(fname, "r")) == NULL)	//파일이 없는 경우 디폴트 값 생성.
-	{
-		f = fopen(fname, "w");
-		fprintf(f, "%d %d %d %d %d ", 18, 19, 20, 21, 22);
-		fprintf(f, "%d %d %d %d %d ", 16, 18, 20, 22, 24);
-		fclose(f);
-	}
-	
-	
-	//프로세스 중요도 심사항목이 5개, 파일 중요도 심사항목이 5개라고 가정하면
-	//데이터 파일에 저장된 가중치는 10개뿐이다.
-	for(i = 0; i < PROC_CATEGORY + FILE_CATEGORY; i++)
-	{
-		fscanf(f, "%d", &temp[i]);
-	}
-
-	//이제 매개변수로 들어온 배열 arr에 가중치 값들을 집어넣는다.
-	//파일의 가중치에 해당되는 값들을 불러온다.
-	for(i = 0; i < FILE_CATEGORY; i++)
-	{
-		*(arr + i) = temp[FILE_OFFSET + i];
-	}
-		
-
-	fclose(f);
-}
 
 //구해낸 항목들의 중요도 값에 임의 파일에 지정한 가중치를 반영시킨다.
 //void calculateFileImportance(int categories)

@@ -4,16 +4,12 @@
 void searchFile()
 {
 
-	int* weights;				//중요도 가중치를 저장할 정수 배열
 	char* path;				//경로를 저장할 문자열
 	int fileCount;				//조사할 파일의 개수
 	//int i;				//테스트를 위한 iteration
 
-	weights = (int*)malloc(sizeof(int)*FILE_CATEGORY);
 	path = (char*)malloc(sizeof(char)*MAXIMUM_PATH_LEN);
 	
-	//---------------가중치를 읽어오는 함수
-	getFileWeights(weights);
 
 	//경로를 입력받아 에 저장하는 함수
 	getPath(path);

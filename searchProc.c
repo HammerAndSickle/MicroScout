@@ -13,8 +13,6 @@ void searchProc()
 	int status;			//동기화를 위한 정수 변수
 	//int i;			//테스트를 위한 iteration 변수
 
-	int* weights;			//중요도 가중치를 저장할 정수 배열
-	ProcImportance* items;		 //중요도를 저장할 자료 배열
 
 
 	chmod("pt.sh", 0775);		//쉘스크립트 권한을 설정
@@ -51,11 +49,7 @@ void searchProc()
 		//자식이 exit 할때까지 기다리게 된다.
 		waitpid(pid, &status, 0);
 		
-		weights = (int*)malloc(sizeof(int)*PROC_CATEGORY);	//가중치 배열을 할당.
-		items = (ProcImportance*)malloc(sizeof(ProcImportance)*MAXIMUM_PROCS); //중요도 자료구조 배열을 할당.
-
-		//-----------------중요도 값들을 파일에서 읽어들이는 함수() - MScout.h
-		getProcWeights(weights);		
+		
 		
 
 		//위 pt.sh을 이용해 프로세스들의 정보를 임의의 파일에 기록했으니 아래 함수에서 그 내용을 읽어
