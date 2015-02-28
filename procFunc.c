@@ -7,17 +7,21 @@
 void getProcScores();
 int getProcStats(ProcStats* procs);
 void getProcWeights(int* arr);
-
+void getProcRanking(ProcStats* procs, int* weights, int count);
+void sumProcScore(ProcStats* proc, int* weights);
+int compareProcscore(const void* a, const void* b);
 
 //임시 dat 파일에 기록된 프로세스 정보들을 사용해 중요도 값을 계산한다.
 void getProcScores()
 {
 	int count; 					//얻어낸 프로세스의 총 개수를 저장한다.
-	int idx;
+	//int idx;
 
 	int* weights;			//중요도 가중치를 저장할 정수 배열
 
 	ProcStats* procs = (ProcStats*)malloc(sizeof(ProcStats)*MAXIMUM_PROCS); //프로세스의 정보들이 담기는 구조체 배열
+
+	printf("============ GETTING PROCS SORTED..... ==============\n\n\n");
 
 	//아래 메소드에서 프로세스 정보를 구조체 배열에 기록한다.
 	count = getProcStats(procs);
@@ -30,11 +34,12 @@ void getProcScores()
 	
 
 
-	//-----------------------테스트용 출력 코드
+	/**-----------------------테스트용 출력 코드
 	for(idx = 0; idx < count; idx++)
 	{
 		printf("%d : %f %f %f %f %f\n", (procs + idx)->pid, (procs + idx)->scores[0], (procs + idx)->scores[1], (procs + idx)->scores[2], (procs + idx)->scores[3], (procs + idx)->scores[4]);
 	}
+	------------------*/
 	
 	//중요도 배열
 	weights = (int*)malloc(sizeof(int)*PROC_CATEGORY);
@@ -42,9 +47,15 @@ void getProcScores()
 	
 	//-----------------중요도 값들을 파일에서 읽어들이는 함수()
 	getProcWeights(weights);
+	
+	//---------------final calculation
+	getProcRanking(procs, weights, count);
+	
+	printf("\n\n=============== FINISHED =================\n\n\n");
 
 
 	free(procs);
+	free(weights);
 
 }
 
@@ -113,3 +124,58 @@ void getProcWeights(int* arr)
 	fclose(f);
 }
 
+//가중치를 반영한, 최종적인 점수, ranking 정렬 후 출력
+void getProcRanking(ProcStats* procs, int* weights, int count)
+{
+	int idx;
+
+	for(idx = 0; idx < count; idx++)
+	{
+		sumProcScore( (procs + idx), weights);
+	}
+
+	qsort(procs, count, sizeof(ProcStats), compareProcscore);	//정렬
+
+	for(idx = 0; idx < TOP_RANKINGS; idx++)
+	{
+		//만일 랭킹 최대 개수보다 현재 프로세스들이 적을 경우
+		if(idx == count) break;
+
+		printf("%d.  %d   %f\n", (idx+1), (procs + idx)->pid, (procs + idx)->scoreSum);
+	}
+
+}
+
+//가중치를 반영한 점수들의 합을 구해 구조체에 저장한다.
+void sumProcScore(ProcStats* proc, int* weights)
+{
+	int idx;
+	float sum = 0.0;
+	
+	for(idx = 0; idx < PROC_CATEGORY; idx++)
+	{
+		sum = sum + ( proc->scores[idx] * (*(weights + idx)) ); 
+	}
+
+	proc->scoreSum = sum;
+}
+
+//compare process' scores for sorting
+int compareProcscore(const void* a, const void* b)
+{
+	float score1, score2;
+	FileStats* file1;
+	FileStats* file2;
+
+	file1 = ((FileStats*)a);
+	file2 = ((FileStats*)b);
+	
+	score1 = file1->scoreSum;
+	score2 = file2->scoreSum;
+
+	if(score1 > score2) return -1;
+
+	else if(score1 < score2) return 1;
+
+	else return 0;
+}
