@@ -164,14 +164,14 @@ void sumProcScore(ProcStats* proc, int* weights)
 int compareProcscore(const void* a, const void* b)
 {
 	float score1, score2;
-	FileStats* file1;
-	FileStats* file2;
+	ProcStats* proc1;
+	ProcStats* proc2;
 
-	file1 = ((FileStats*)a);
-	file2 = ((FileStats*)b);
+	proc1 = ((ProcStats*)a);
+	proc2 = ((ProcStats*)b);
 	
-	score1 = file1->scoreSum;
-	score2 = file2->scoreSum;
+	score1 = proc1->scoreSum;
+	score2 = proc2->scoreSum;
 
 	if(score1 > score2) return -1;
 
