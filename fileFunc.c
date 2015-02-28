@@ -8,7 +8,7 @@ void getFileWeights(int* arr);
 void getFileStats(FileStats* files, int count);
 void getFileRanking(FileStats* files, int* weights, int count);
 void sumFileScore(FileStats* file, int* weights);
-int comparescore(const void* a, const void* b);
+int compareFilescore(const void* a, const void* b);
 
 // 파일의 개수를 받아, 임시 dat 파일에 기록된 파일 정보들을 사용해
 // 중요도 값 수치들을 얻어낸다.
@@ -132,7 +132,7 @@ void getFileRanking(FileStats* files, int* weights, int count)
 		sumFileScore( (files + idx), weights);
 	}
 
-	qsort(files, count, sizeof(FileStats), comparescore);
+	qsort(files, count, sizeof(FileStats), compareFilescore);
 
 	for(idx = 0; idx < TOP_RANKINGS; idx++)
 	{
@@ -159,7 +159,7 @@ void sumFileScore(FileStats* file, int* weights)
 }
 
 //compare function
-int comparescore(const void* a, const void* b)
+int compareFilescore(const void* a, const void* b)
 {
 	float score1, score2;
 	FileStats* file1;
