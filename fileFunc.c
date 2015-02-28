@@ -6,8 +6,9 @@
 void getFileScores(int count);
 void getFileWeights(int* arr);
 void getFileStats(FileStats* files, int count);
-
-
+void getFileRanking(FileStats* files, int* weights, int count);
+void sumFileScore(FileStats* file, int* weights);
+int comparescore(const void* a, const void* b);
 
 // 파일의 개수를 받아, 임시 dat 파일에 기록된 파일 정보들을 사용해
 // 중요도 값 수치들을 얻어낸다.
@@ -15,9 +16,11 @@ void getFileScores(int count)
 {
 	FileStats* files = (FileStats*)malloc(sizeof(FileStats)*count);	//파일의 정보들이 담기는 구조체 배열
 	int* weights;				//중요도 가중치를 저장할 정수 배열
-	int idx;
+	//int idx;
 
 	weights = (int*)malloc(sizeof(int)*FILE_CATEGORY);
+
+	printf("============ GETTING FILES SORTED..... ==============\n\n\n");
 
 	//파일 정보를 files 구조체 배열에 기록
 	getFileStats(files, count);
@@ -30,17 +33,24 @@ void getFileScores(int count)
 
 
 
-	//--------------------테스트용 출력 코드
+	/**--------------------테스트용 출력 코드
 	for(idx = 0; idx < count; idx++)
 	{
 		printf("%s : %f %f %f %f %f\n", (files + idx)->name, (files + idx)->scores[0], (files + idx)->scores[1], (files + idx)->scores[2], (files + idx)->scores[3], (files + idx)->scores[4]);
 	}
+	**----------------------*/
 
 	//---------------가중치를 읽어오는 함수
 	getFileWeights(weights);
 
+	//---------------final calculation
+	getFileRanking(files, weights, count);
+	
+	printf("\n\n=============== FINISHED =================\n\n\n");
+
 
 	free(files);
+	free(weights);
 	
 }
 
@@ -112,7 +122,58 @@ void getFileWeights(int* arr)
 	fclose(f);
 }
 
-//가중치를 반영한, 최종적인 점수, ranking 계산
-void getRanking(FileStats* files, int* weight)
+//가중치를 반영한, 최종적인 점수, ranking 정렬 후 출력
+void getFileRanking(FileStats* files, int* weights, int count)
 {
-	float
+	int idx;
+
+	for(idx = 0; idx < count; idx++)
+	{
+		sumFileScore( (files + idx), weights);
+	}
+
+	qsort(files, count, sizeof(FileStats), comparescore);
+
+	for(idx = 0; idx < TOP_RANKINGS; idx++)
+	{
+		//만일 랭킹 최대 개수보다 현재 파일들이 적을 경우
+		if(idx == count) break;
+
+		printf("%d.  %s\n", (idx+1), (files + idx)->name);
+	}
+
+}
+
+//가중치를 반영한 점수들의 합을 구해 구조체에 저장한다.
+void sumFileScore(FileStats* file, int* weights)
+{
+	int idx;
+	float sum = 0.0;
+	
+	for(idx = 0; idx < FILE_CATEGORY; idx++)
+	{
+		sum = sum + ( file->scores[idx] * (*(weights + idx)) ); 
+	}
+
+	file->scoreSum = sum;
+}
+
+//compare function
+int comparescore(const void* a, const void* b)
+{
+	float score1, score2;
+	FileStats* file1;
+	FileStats* file2;
+
+	file1 = ((FileStats*)a);
+	file2 = ((FileStats*)b);
+	
+	score1 = file1->scoreSum;
+	score2 = file2->scoreSum;
+
+	if(score1 > score2) return -1;
+
+	else if(score1 < score2) return 1;
+
+	else return 0;
+}

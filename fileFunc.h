@@ -48,6 +48,9 @@
 #define ETC_START_SCORE 40
 #define ROOT_UID 0			//root uid는 0을 갖는다.
 
+
+#define TOP_RANKINGS 25
+
 //File의 정보들을 저장하는 데이터구조다.
 typedef struct FileStats
 {
