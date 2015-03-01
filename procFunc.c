@@ -141,7 +141,7 @@ void getProcRanking(ProcStats* procs, int* weights, int count)
 		//만일 랭킹 최대 개수보다 현재 프로세스들이 적을 경우
 		if(idx == count) break;
 
-		printf("%d.\tPID : %d\t\t\tSCORE: %f\n", (idx+1), (procs + idx)->pid, (procs + idx)->scoreSum);
+		printf("%d\t\t%f pts \t\tPID: %d\n", (idx+1), (procs + idx)->scoreSum, (procs + idx)->pid);
 	}
 
 }
