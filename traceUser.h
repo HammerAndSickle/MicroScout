@@ -31,7 +31,8 @@ int getUserStats(UserStats* users);
 void eval_print(UserStats* users, int num);
 int searchMAX(UserStats* user);
 void getSentences(UserStats* user, int idx);
-
+void traceUserSTART();
+void traceUserEND(UserStats* users);
 
 //유저들의 정보를 파일에서 읽어들이고, 총 유저 수를 반환한다.
 int getUserStats(UserStats* users)
@@ -145,7 +146,18 @@ void getSentences(UserStats* user, int idx)
 	printf("\n");
 }
 
+//함수의 시작. 문장 출력
+void traceUserSTART()
+{
+	printf("\n\n\n@==================== TRACING USERS... ===================@\n\n\n\n");
+}
 
+//함수의 마지막. 메모리 반환 후, 문장 출력
+void traceUserEND(UserStats* users)
+{
+	free(users);
 
+	printf("\n\n\n@======================= FINISHED =========================@\n\n");
+}
 
 

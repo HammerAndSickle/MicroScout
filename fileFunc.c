@@ -9,22 +9,20 @@ void getFileStats(FileStats* files, int count);
 void getFileRanking(FileStats* files, int* weights, int count);
 void sumFileScore(FileStats* file, int* weights);
 int compareFilescore(const void* a, const void* b);
+void fileFuncSTART(FileStats* files, int* weights, int count);
+void fileFuncEND(FileStats* files, int* weights);
 
 // 파일의 개수를 받아, 임시 dat 파일에 기록된 파일 정보들을 사용해
 // 중요도 값 수치들을 얻어낸다.
 void getFileScores(int count)
 {
-	FileStats* files = (FileStats*)malloc(sizeof(FileStats)*count);	//파일의 정보들이 담기는 구조체 배열
-	int* weights;				//중요도 가중치를 저장할 정수 배열
-	//int idx;
+	FileStats* files = (FileStats*)malloc(sizeof(FileStats)*count);		//파일의 정보들이 담기는 구조체 배열
+	int* weights = (int*)malloc(sizeof(int)*FILE_CATEGORY);			//중요도 가중치를 저장할 정수 배열
 
-	weights = (int*)malloc(sizeof(int)*FILE_CATEGORY);
+	//--------------START OF FILE
+	fileFuncSTART(files, weights, count);
 
-	printf("============ GETTING FILES SORTED..... ==============\n\n\n");
-
-	//파일 정보를 files 구조체 배열에 기록
-	getFileStats(files, count);
-
+	//--------------점수를 계산하는 함수.
 	eval1_stat(files, count, SECTOR1);		//권한값을 이용해 점수 계산
 	eval2_blks(files, count, SECTOR2);		//블록과 용량으로 점수 계산
 	eval3_hardlinks(files, count, SECTOR3);		//하드 링크 개수로 점수 계산
@@ -32,26 +30,27 @@ void getFileScores(int count)
 	eval5_etc(files, count, SECTOR5);		//소유자, 디바이스 장치 정보를 이용해 점수 계산
 
 
-
-	/**--------------------테스트용 출력 코드
-	for(idx = 0; idx < count; idx++)
-	{
-		printf("%s : %f %f %f %f %f\n", (files + idx)->name, (files + idx)->scores[0], (files + idx)->scores[1], (files + idx)->scores[2], (files + idx)->scores[3], (files + idx)->scores[4]);
-	}
-	**----------------------*/
-
 	//---------------가중치를 읽어오는 함수
 	getFileWeights(weights);
 
 	//---------------final calculation
 	getFileRanking(files, weights, count);
 	
-	printf("\n\n=============== FINISHED =================\n\n\n");
 
+	//--------------END OF FUNCTION
+	fileFuncEND(files, weights);	
+}
 
-	free(files);
-	free(weights);
-	
+//함수의 시작 부분. 문장 출력 후, 파일의 정보들도 읽어들인다.
+void fileFuncSTART(FileStats* files, int* weights, int count)
+{
+	printf("@======================== GETTING FILES SORTED..... =========================@\n\n\n");
+	printf("ORDER\t\tSCORE\t\t\t\tNAME\n");
+	printf("------------------------------------------------------------------------------\n");
+
+	//파일의 정보들을 구조체에 옮겨 저장한다.
+	getFileStats(files, count);
+
 }
 
 //filestats.dat에 기록되어 있는 파일의 정보들을 얻어낸다.
@@ -63,6 +62,7 @@ void getFileStats(FileStats* files, int count)
 	int idx;
 
 	tmpF = fopen(tempFname, "r");
+	
 
 	//파일과 그 정보들을 모두 구조체 배열에 저장한다.
 	for(idx = 0; idx < count; idx++)
@@ -72,7 +72,6 @@ void getFileStats(FileStats* files, int count)
 &((files + idx)->blksize),&((files + idx)->blocks),&((files + idx)->atime));
 		strcpy((files + idx)->name, tempName);
 	}
-
 
 
 	fclose(tmpF);
@@ -177,4 +176,15 @@ int compareFilescore(const void* a, const void* b)
 	else if(score1 < score2) return 1;
 
 	else return 0;
+}
+
+//함수의 끝부분. 문장 출력 후, 할당받은 동적 메모리도 해제한다.
+void fileFuncEND(FileStats* files, int* weights)
+{
+	printf("\n\n@==============================    FINISHED ");
+	printf("   ===============================@\n\n\n");
+
+	free(files);
+	free(weights);
+	
 }

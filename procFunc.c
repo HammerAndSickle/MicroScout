@@ -10,53 +10,48 @@ void getProcWeights(int* arr);
 void getProcRanking(ProcStats* procs, int* weights, int count);
 void sumProcScore(ProcStats* proc, int* weights);
 int compareProcscore(const void* a, const void* b);
+void procFuncSTART();
+void procFuncEND(ProcStats* procs, int* weights);
+
 
 //임시 dat 파일에 기록된 프로세스 정보들을 사용해 중요도 값을 계산한다.
 void getProcScores()
 {
-	int count; 					//얻어낸 프로세스의 총 개수를 저장한다.
-	//int idx;
-
-	int* weights;			//중요도 가중치를 저장할 정수 배열
-
+	int count; 								//얻어낸 프로세스의 총 개수를 저장한다.
 	ProcStats* procs = (ProcStats*)malloc(sizeof(ProcStats)*MAXIMUM_PROCS); //프로세스의 정보들이 담기는 구조체 배열
+	int* weights = (int*)malloc(sizeof(int)*PROC_CATEGORY);			//가중치 값을 저장할 정수 배열
 
-	printf("============ GETTING PROCS SORTED..... ==============\n\n\n");
+	//---------------start of function
+	procFuncSTART();
 
 	//아래 메소드에서 프로세스 정보를 구조체 배열에 기록한다.
 	count = getProcStats(procs);
 	
+	//----------------------점수를 계산하는 함수
 	eval1_nice(procs, count, SECTOR1);			//nice 값을 이용해 점수 계산
 	eval2_FD(procs, count, USE_HARD_LIMIT, SECTOR2);	//FDSize 값을 이용해 점수 계산
 	eval3_CPU_USAGE(procs, count, SECTOR3);			//CPU 사용률을 이용해 점수 계산
 	eval4_pids_comp(procs, count, SECTOR4);			//PID 값들을 이용해 점수 계산
 	eval5_memory(procs, count, SECTOR5);			//memory 관련 값들을 이용해 점수 계산
 	
-
-
-	/**-----------------------테스트용 출력 코드
-	for(idx = 0; idx < count; idx++)
-	{
-		printf("%d : %f %f %f %f %f\n", (procs + idx)->pid, (procs + idx)->scores[0], (procs + idx)->scores[1], (procs + idx)->scores[2], (procs + idx)->scores[3], (procs + idx)->scores[4]);
-	}
-	------------------*/
-	
-	//중요도 배열
-	weights = (int*)malloc(sizeof(int)*PROC_CATEGORY);
-
-	
+		
 	//-----------------중요도 값들을 파일에서 읽어들이는 함수()
 	getProcWeights(weights);
 	
 	//---------------final calculation
 	getProcRanking(procs, weights, count);
 	
-	printf("\n\n=============== FINISHED =================\n\n\n");
+	//----------------END OF FUNCTION
+	procFuncEND(procs, weights);
 
+}
 
-	free(procs);
-	free(weights);
-
+//함수의 시작 부분. 문장 출력.
+void procFuncSTART()
+{
+	printf("\n@==============  GETTING PROCS SORTED.....  =============@\n\n");
+	printf("ORDER\t\tSCORE\t\t\t\tPID\n");
+	printf("----------------------------------------------------------\n");
 }
 
 //정보가 기록된 파일에서 프로세스와 그 정보들을 읽어들이고, 프로세스의 총 개수를 반환한다.
@@ -178,4 +173,16 @@ int compareProcscore(const void* a, const void* b)
 	else if(score1 < score2) return 1;
 
 	else return 0;
+}
+
+//함수의 마지막 부분. 문장 출력 후 메모리 해제
+void procFuncEND(ProcStats* procs, int* weights)
+{
+	
+	printf("\n\n@==============         FINISHED         ================@\n\n\n");
+
+
+	free(procs);
+	free(weights);
+
 }
